@@ -2,10 +2,41 @@
 import BaseInput from "@/components/ui/BaseInput.vue";
 import SignUpIcon from "@/components/ui/icons/SignUpIcon.vue";
 import { ref } from "vue";
+import {useRouter} from "vue-router";
+
+const router = useRouter();
 
 const email = ref("");
 const password = ref("");
 const conf_password = ref("");
+
+const registerUser = async () => {
+  if (!email.value || !password.value || !conf_password.value) {
+    return alert("All fields are required");
+  }
+
+  if (password.value !== conf_password.value) {
+    return alert("Passwords don't match");
+  }
+
+  const res = await fetch("http://localhost:3333/register", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      email: email.value,
+      password: password.value,
+    })
+  }).then(res => res.json())
+
+  if (res.success) {
+    localStorage.setItem("token", res.token);
+    router.push("/");
+  } else {
+    alert(res.message);
+  }
+}
 </script>
 
 <template>
@@ -16,27 +47,27 @@ const conf_password = ref("");
         <h2 class="text-2xl">Create an account!</h2>
       </header>
 
-      <form @submit.prevent="" class="flex flex-col gap-4">
+      <form @submit.prevent="registerUser" class="flex flex-col gap-4">
         <BaseInput
           v-model="email"
           label="Email"
           type="email"
           placeholder="your@email.com"
-          input-class="text-sm border-b py-1 px-2 placeholder:italic hover:border-indigo-600 transition-colors focus:outline-none focus:border-indigo-600"
+          input-class="auth-form-input"
         />
         <BaseInput
           v-model="password"
           label="Password"
           type="password"
           placeholder="••••••••"
-          input-class="text-sm border-b py-1 px-2 placeholder:italic hover:border-indigo-600 transition-colors focus:outline-none focus:border-indigo-600"
+          input-class="auth-form-input"
         />
         <BaseInput
           v-model="conf_password"
           label="Confirm password"
           type="password"
           placeholder="••••••••"
-          input-class="text-sm border-b py-1 px-2 placeholder:italic hover:border-indigo-600 transition-colors focus:outline-none focus:border-indigo-600"
+          input-class="auth-form-input"
         />
 
         <input
@@ -53,3 +84,5 @@ const conf_password = ref("");
     </div>
   </main>
 </template>
+
+<style scoped></style>
