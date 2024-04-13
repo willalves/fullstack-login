@@ -1,6 +1,6 @@
 <script setup>
 import BaseInput from "@/components/ui/BaseInput.vue";
-import SignUpIcon from "@/components/ui/icons/SignUpIcon.vue";
+import { CircleUserRound, Shell } from "lucide-vue-next";
 import { ref } from "vue";
 import {useRouter} from "vue-router";
 
@@ -9,8 +9,10 @@ const router = useRouter();
 const email = ref("");
 const password = ref("");
 const conf_password = ref("");
+const loading = ref(false);
 
 const registerUser = async () => {
+  loading.value = true;
   if (!email.value || !password.value || !conf_password.value) {
     return alert("All fields are required");
   }
@@ -36,6 +38,7 @@ const registerUser = async () => {
   } else {
     alert(res.message);
   }
+  loading.value = false;
 }
 </script>
 
@@ -43,7 +46,7 @@ const registerUser = async () => {
   <main class="h-[100vh] flex items-center justify-center">
     <div class="auth-wrapper">
       <header class="p-2 flex flex-col items-center justify-center">
-        <SignUpIcon icon-class="w-8 h-8 fill-indigo-600" />
+        <CircleUserRound size="42" color="#4f46e5" absoluteStrokeWidth={true} />
         <h2 class="text-2xl">Create an account!</h2>
       </header>
 
@@ -70,11 +73,14 @@ const registerUser = async () => {
           input-class="auth-form-input"
         />
 
-        <input
+        <button
           type="submit"
-          value="Register"
-          class="mt-4 w-full border border-indigo-600 py-2 px-6 rounded cursor-pointer text-xs bg-indigo-600 text-white hover:bg-indigo-700 transition font-bold"
-        />
+          class="mt-4 w-full border border-indigo-600 py-2 px-6 rounded cursor-pointer text-xs bg-indigo-600 text-white hover:bg-indigo-700 transition flex gap-2 items-center justify-center disabled:bg-gray-500 disabled:border-gray-500 disabled:cursor-not-allowed"
+          :disabled="!!loading"
+        >
+          <Shell size="18" color="#fff" absoluteStrokeWidth={true} class="animate-spin" v-if="loading" />
+          <span class="font-bold" v-else>Register</span>
+        </button>
       </form>
 
       <footer>

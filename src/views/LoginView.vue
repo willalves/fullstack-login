@@ -1,17 +1,16 @@
 <script setup>
-/**
- * TO KEEP GOING LATER: https://www.youtube.com/watch?v=SweqIbsYZ94
- */
 import BaseInput from "@/components/ui/BaseInput.vue";
-import SignInIcon from "@/components/ui/icons/SignInIcon.vue";
 import { ref } from "vue";
 import {useRouter} from "vue-router";
+import { LogIn, Shell } from 'lucide-vue-next';
 
 const router = useRouter();
 const email = ref("");
 const password = ref("");
+const loading = ref(false);
 
 const loginUser = async () => {
+  loading.value = true;
   if (!email.value || !password.value) {
     return alert("All fields are required");
   }
@@ -33,6 +32,7 @@ const loginUser = async () => {
   } else {
     alert(res.message);
   }
+  loading.value = false;
 }
 </script>
 
@@ -40,7 +40,7 @@ const loginUser = async () => {
   <main class="h-[100vh] flex items-center justify-center">
     <div class="auth-wrapper">
       <header class="p-2 flex flex-col items-center justify-center">
-        <SignInIcon icon-class="w-8 h-8 fill-indigo-600" />
+        <LogIn size="42" color="#4f46e5" absoluteStrokeWidth={true} />
         <h2 class="text-2xl">Welcome!</h2>
         <p class="">Sign in to your account</p>
       </header>
@@ -61,11 +61,14 @@ const loginUser = async () => {
           input-class="auth-form-input"
         />
 
-        <input
+        <button
           type="submit"
-          value="Login"
-          class="mt-4 w-full border border-indigo-600 py-2 px-6 rounded cursor-pointer text-xs bg-indigo-600 text-white hover:bg-indigo-700 transition font-bold"
-        />
+          class="mt-4 w-full border border-indigo-600 py-2 px-6 rounded cursor-pointer text-xs bg-indigo-600 text-white hover:bg-indigo-700 transition font-bold flex gap-2 items-center justify-center disabled:bg-gray-500 disabled:border-gray-500 disabled:cursor-not-allowed"
+          :disabled="!!loading"
+        >
+          <Shell size="18" color="#fff" absoluteStrokeWidth={true} class="animate-spin" v-if="loading" />
+          <span class="font-bold" v-else>Login</span>
+        </button>
       </form>
 
       <footer>
