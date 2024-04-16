@@ -1,30 +1,23 @@
 <script setup>
-import {useRouter} from "vue-router";
+import { useAuthStore } from "@/stores/authStore.js";
 import { ref } from "vue";
+import { toast } from "vue3-toastify";
 
-const router = useRouter();
+const authStore = useAuthStore();
+
 const loading = ref(false);
 
 const logout = async () => {
   loading.value = true;
-  const res = await fetch("http://localhost:3333/logout", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      session_token: localStorage.getItem("token"),
-    })
-  }).then(res => res.json());
-
-  if (res.success) {
-    localStorage.removeItem("token");
-    router.push("/login");
-  } else {
-    alert(res.message);
+  try {
+    await authStore.logout();
+  } catch(error) {
+    toast.error(error.message);
+  } finally {
+    loading.value = false;
   }
-  loading.value = false;
 }
+
 </script>
 
 <template>

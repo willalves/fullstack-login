@@ -1,43 +1,35 @@
 <script setup>
-import BaseInput from "@/components/ui/BaseInput.vue";
+import { useAuthStore } from "@/stores/authStore.js";
 import { ref } from "vue";
-import {useRouter} from "vue-router";
+import { toast } from "vue3-toastify";
+import BaseInput from "@/components/ui/BaseInput.vue";
 import { LogIn, Shell } from 'lucide-vue-next';
 
-const router = useRouter();
+const authStore = useAuthStore();
+
 const email = ref("");
 const password = ref("");
 const loading = ref(false);
 
 const loginUser = async () => {
   loading.value = true;
-  if (!email.value || !password.value) {
-    return alert("All fields are required");
+  try {
+    await authStore.login(email.value, password.value);
+    if (!authStore.data.success) {
+      throw new Error(authStore.data.message);
+    } else {
+      toast.success(`Welcome ${authStore.data.user.name.first_name} ${authStore.data.user.name.last_name}!`);
+    }
+  } catch (error) {
+    toast.error(error.message);
+  } finally {
+    loading.value = false;
   }
-
-  const res = await fetch("http://localhost:3333/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      email: email.value,
-      password: password.value,
-    })
-  }).then(res => res.json())
-
-  if (res.success) {
-    localStorage.setItem("token", res.token);
-    router.push("/");
-  } else {
-    alert(res.message);
-  }
-  loading.value = false;
 }
 </script>
 
 <template>
-  <main class="h-[100vh] flex items-center justify-center">
+  <main class="h-screen flex items-center justify-center">
     <div class="auth-wrapper">
       <header class="p-2 flex flex-col items-center justify-center">
         <LogIn size="42" color="#4f46e5" absoluteStrokeWidth={true} />

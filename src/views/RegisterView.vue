@@ -6,6 +6,8 @@ import {useRouter} from "vue-router";
 
 const router = useRouter();
 
+const firstName = ref("");
+const lastName = ref("");
 const email = ref("");
 const password = ref("");
 const conf_password = ref("");
@@ -27,6 +29,7 @@ const registerUser = async () => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
+      name: { first_name: firstName.value, last_name: lastName.value },
       email: email.value,
       password: password.value,
     })
@@ -51,6 +54,22 @@ const registerUser = async () => {
       </header>
 
       <form @submit.prevent="registerUser" class="flex flex-col gap-4">
+        <div class="flex items-center justify-between">
+          <BaseInput
+            v-model="firstName"
+            label="First name"
+            type="text"
+            placeholder="William"
+            input-class="auth-form-input"
+          />
+          <BaseInput
+            v-model="lastName"
+            label="Last name"
+            type="text"
+            placeholder="Silva"
+            input-class="auth-form-input"
+          />
+        </div>
         <BaseInput
           v-model="email"
           label="Email"

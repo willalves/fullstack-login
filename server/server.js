@@ -19,10 +19,11 @@ app.use(cors());
 app.use(express.json());
 
 app.post('/register', async (req, res) => {
-  const { email, password } = req.body;
+  const { name, email, password } = req.body;
 
   try {
     const resp = await client.passwords.create({
+      name,
       email,
       password,
       session_duration_minutes: 60
@@ -45,10 +46,11 @@ app.post('/register', async (req, res) => {
 });
 
 app.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+  const { id, email, password } = req.body;
 
   try {
     const resp = await client.passwords.authenticate({
+      id,
       email,
       password,
       session_duration_minutes: 60
@@ -57,7 +59,12 @@ app.post('/login', async (req, res) => {
     res.json({
       success: true,
       message: 'User logged in successfully',
-      token: resp.session_token
+      user: {
+        id: resp.user_id,
+        name: resp.user.name,
+        email: email,
+        password: password
+      }
     })
   } catch (error) {
     console.log(error);
