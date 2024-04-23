@@ -2,8 +2,10 @@
 import { useAuthStore } from "@/stores/authStore.js";
 import { ref } from "vue";
 import { toast } from "vue3-toastify";
+import { useRouter } from "vue-router";
 
 const authStore = useAuthStore();
+const router = useRouter();
 
 const loading = ref(false);
 
@@ -11,6 +13,7 @@ const logout = async () => {
   loading.value = true;
   try {
     await authStore.logout();
+    await router.push("/");
   } catch(error) {
     toast.error(error.message);
   } finally {

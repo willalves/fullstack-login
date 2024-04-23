@@ -4,8 +4,10 @@ import { ref } from "vue";
 import { toast } from "vue3-toastify";
 import BaseInput from "@/components/ui/BaseInput.vue";
 import { LogIn, Shell } from 'lucide-vue-next';
+import { useRouter } from "vue-router";
 
 const authStore = useAuthStore();
+const router = useRouter();
 
 const email = ref("");
 const password = ref("");
@@ -19,6 +21,7 @@ const loginUser = async () => {
       throw new Error(authStore.data.message);
     } else {
       toast.success(`Welcome ${authStore.data.user.name.first_name} ${authStore.data.user.name.last_name}!`);
+      await router.push("/");
     }
   } catch (error) {
     toast.error(error.message);
